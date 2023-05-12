@@ -33,3 +33,42 @@ design.addEventListener("change", (e) => {
     }
   }
 });
+
+// Register for activities section
+const activities = document.getElementById("activities");
+const activitiesCost = document.getElementById("activities-cost");
+let totalCost = 0;
+activities.addEventListener("change", (e) => {
+  const dataCost = parseInt(e.target.getAttribute("data-cost"));
+  if (e.target.checked) {
+    totalCost += dataCost;
+  } else {
+    totalCost -= dataCost;
+  }
+  activitiesCost.innerHTML = `Total: $${totalCost}`;
+});
+
+// Payment section
+const payment = document.getElementById("payment");
+const creditCard = document.getElementById("credit-card");
+const paypal = document.getElementById("paypal");
+const bitcoin = document.getElementById("bitcoin");
+paypal.style.display = "none";
+bitcoin.style.display = "none";
+payment.children[1].selected = true;
+
+payment.addEventListener("change", (e) => {
+  if (e.target.value === "credit-card") {
+    creditCard.style.display = "block";
+    paypal.style.display = "none";
+    bitcoin.style.display = "none";
+  } else if (e.target.value === "paypal") {
+    creditCard.style.display = "none";
+    paypal.style.display = "block";
+    bitcoin.style.display = "none";
+  } else if (e.target.value === "bitcoin") {
+    creditCard.style.display = "none";
+    paypal.style.display = "none";
+    bitcoin.style.display = "block";
+  }
+});
