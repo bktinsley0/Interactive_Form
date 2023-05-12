@@ -8,4 +8,4 @@ This project is a registration form for a fictional conference called "FullStack
 - Conditional error messages
 - Conditional error message styling
 
-[Form validation][/img/formPic.png]
+![Form validation][/img/formPic.png]
