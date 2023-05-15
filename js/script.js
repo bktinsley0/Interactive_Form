@@ -1,6 +1,7 @@
 // Name field focus
 const nameField = document.getElementById("name");
 nameField.focus();
+
 // Job role section
 const otherJobRole = document.getElementById("other-job-role");
 otherJobRole.style.display = "none";
@@ -51,10 +52,10 @@ activities.addEventListener("change", (e) => {
 const checkboxes = document.querySelectorAll("#activities input");
 for (let i = 0; i < checkboxes.length; i++) {
   const checkbox = checkboxes[i];
-  checkbox.addEventListener("focus", (e) => {
+  checkbox.addEventListener("focus", () => {
     checkbox.parentElement.classList.add("focus");
   });
-  checkbox.addEventListener("blur", (e) => {
+  checkbox.addEventListener("blur", () => {
     checkbox.parentElement.classList.remove("focus");
   });
 }
@@ -86,19 +87,67 @@ payment.addEventListener("change", (e) => {
 
 // Form validation section
 const form = document.querySelector("form");
-const email = document.getElementById("email");
-const cardNumber = document.getElementById("cc-num");
-const zipCode = document.getElementById("zip");
-const cvv = document.getElementById("cvv");
 
 // Helper functions
+const passedValidation = (element) => {
+  element.parentElement.classList.add("valid");
+  element.parentElement.classList.remove("not-valid");
+  element.parentElement.lastElementChild.style.display = "none";
+};
+const failedValidation = (element) => {
+  element.parentElement.classList.add("not-valid");
+  element.parentElement.classList.remove("valid");
+  element.parentElement.lastElementChild.style.display = "block";
+};
+// name field validation
 const isValidName = (name) => {
+  console.log(name);
   return /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(name);
 };
+const nameHint = document.getElementById("name-hint");
 
+nameField.addEventListener("keyup", (e) => {
+  if (!isValidName(e.target.value)) {
+    nameHint.style.display = "block";
+    failedValidation(nameField);
+  } else {
+    nameHint.style.display = "none";
+    passedValidation(nameField);
+  }
+});
+
+// email field validation
 const isValidEmail = (email) => {
   return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
 };
+const emailInput = document.getElementById("email");
+const emailHint = document.getElementById("email-hint");
+emailInput.addEventListener("keyup", (e) => {
+  if (!isValidEmail(e.target.value)) {
+    emailHint.style.display = "block";
+    failedValidation(emailInput);
+  } else {
+    emailHint.style.display = "none";
+    passedValidation(emailInput);
+  }
+});
+// Activities validation
+const isValidActivities = () => {
+  const activities = document.querySelectorAll("#activities input");
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i].checked) {
+      return true;
+    }
+  }
+  return false;
+};
+// payment validation
+const cardNumber = document.getElementById("cc-num");
+const zipCode = document.getElementById("zip");
+const cvv = document.getElementById("cvv");
+const ccHint = document.getElementById("cc-hint");
+const zipHint = document.getElementById("zip-hint");
+const cvvHint = document.getElementById("cvv-hint");
 
 const isValidCardNumber = (cardNumber) => {
   return /^\d{13,16}$/.test(cardNumber);
@@ -112,72 +161,51 @@ const isValidCvv = (cvv) => {
   return /^\d{3}$/.test(cvv);
 };
 
-const isValidActivities = () => {
-  const activities = document.querySelectorAll("#activities input");
-  for (let i = 0; i < activities.length; i++) {
-    if (activities[i].checked) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const isValidPayment = () => {
-  const payment = document.getElementById("payment");
-  if (payment.value === "credit-card") {
-    return (
-      isValidCardNumber(cardNumber.value) &&
-      isValidZipCode(zipCode.value) &&
-      isValidCvv(cvv.value)
-    );
-  } else {
-    return true;
-  }
-};
-
 // Form Registration check
 form.addEventListener("submit", (e) => {
   if (!isValidName(nameField.value)) {
     e.preventDefault();
-    nameField.parentElement.classList.add("not-valid");
-    nameField.parentElement.classList.remove("valid");
-    nameField.parentElement.lastElementChild.style.display = "block";
+    failedValidation(nameField);
   } else {
-    nameField.parentElement.classList.add("valid");
-    nameField.parentElement.classList.remove("not-valid");
-    nameField.parentElement.lastElementChild.style.display = "none";
+    passedValidation(nameField);
   }
 
   if (!isValidEmail(email.value)) {
     e.preventDefault();
-    email.parentElement.classList.add("not-valid");
-    email.parentElement.classList.remove("valid");
-    email.parentElement.lastElementChild.style.display = "block";
+    failedValidation(email);
   } else {
-    email.parentElement.classList.add("valid");
-    email.parentElement.classList.remove("not-valid");
-    email.parentElement.lastElementChild.style.display = "none";
+    passedValidation(email);
   }
 
   if (!isValidActivities()) {
     e.preventDefault();
-    activities.classList.add("not-valid");
-    activities.classList.remove("valid");
-    activities.lastElementChild.style.display = "block";
+    failedValidation(activities);
   } else {
-    activities.classList.add("valid");
-    activities.classList.remove("not-valid");
-    activities.lastElementChild.style.display = "none";
+    passedValidation(activities);
   }
 
-  if (!isValidPayment()) {
+  if (payment.value === "credit-card") {
     e.preventDefault();
-    payment.parentElement.classList.add("not-valid");
-    payment.parentElement.classList.remove("valid");
-    payment.parentElement.lastElementChild.style.display = "block";
+
+    if (!isValidCardNumber(cardNumber.value)) {
+      ccHint.style.display = "block";
+      failedValidation(cardNumber);
+    } else {
+      passedValidation(cardNumber);
+    }
+    if (!isValidZipCode(zipCode.value)) {
+      zipHint.style.display = "block";
+      failedValidation(zipCode);
+    } else {
+      passedValidation(zipCode);
+    }
+    if (!isValidCvv(cvv.value)) {
+      cvvHint.style.display = "block";
+      failedValidation(cvv);
+    } else {
+      passedValidation(cvv);
+    }
   } else {
-    payment.parentElement.classList.add("valid");
-    payment.parentElement.classList.remove("not-valid");
-    payment.parentElement.lastElementChild.style.display = "none";
+    passedValidation(payment);
   }
 });
